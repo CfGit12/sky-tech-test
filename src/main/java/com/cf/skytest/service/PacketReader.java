@@ -1,6 +1,6 @@
 package com.cf.skytest.service;
 
-import com.cf.skytest.model.StreamPacket;
+import com.cf.skytest.model.Packet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,11 +34,11 @@ public class PacketReader implements AutoCloseable {
         socket.close();
     }
 
-    public StreamPacket readPacket() throws IOException {
+    public Packet readPacket() throws IOException {
         String line = reader.readLine();
         String regex = "(?<!\\\\)" + Pattern.quote("|");
         List<String> list = Arrays.asList(line.split(regex));
         list = list.stream().map(s -> s.replace("\\|", "|")).collect(Collectors.toList());
-        return StreamPacket.fromInputFeed(list);
+        return Packet.fromInputFeed(list);
     }
 }

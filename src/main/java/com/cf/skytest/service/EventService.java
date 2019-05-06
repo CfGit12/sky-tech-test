@@ -3,9 +3,10 @@ package com.cf.skytest.service;
 import com.cf.skytest.model.Event;
 import com.cf.skytest.model.Market;
 import com.cf.skytest.model.Outcome;
-import com.cf.skytest.model.StreamPacket;
+import com.cf.skytest.model.Packet;
 import com.cf.skytest.repo.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -16,6 +17,13 @@ import java.util.Optional;
 public class EventService {
 
     private final EventRepository repository;
+
+    @Value("${packetreader.host}")
+    private String packetReaderHost;
+    @Value("${packetreader.port}")
+    private String packetReaderPort;
+    @Value("${packetreader.packetstoread}")
+    private String packetsToRead;
 
     @Autowired
     public EventService(EventRepository repository) {
@@ -28,21 +36,23 @@ public class EventService {
 
     public void readPackets() throws IOException {
         repository.deleteAll(); // Just give us a fresh start for each application run
-        System.out.println("Reading packets...");
-        try (PacketReader packetReader = new PacketReader("192.168.99.100", 8282)) {
-            while (true) {
-                StreamPacket streamPacket = packetReader.readPacket();
-                switch (streamPacket.getType()) {
+        System.out.println("Reading " + packetsToRead + " packets...");
+        int count = 0;
+        try (PacketReader packetReader = new PacketReader(packetReaderHost, Integer.parseInt(packetReaderPort))) {
+            while (count < Integer.parseInt(packetsToRead)) {
+                count++;
+                Packet packet = packetReader.readPacket();
+                switch (packet.getType()) {
                     case "event":
-                        processEvent(streamPacket);
+                        processEvent(packet);
                         break;
 
                     case "market":
-                        processMarket(streamPacket);
+                        processMarket(packet);
                         break;
 
                     case "outcome":
-                        processOutcome(streamPacket);
+                        processOutcome(packet);
                         break;
 
                     default:
@@ -50,12 +60,13 @@ public class EventService {
                 }
             }
         }
+        System.out.println("...done");
     }
 
-    private void processEvent(StreamPacket streamPacket) {
-        Event event = Event.fromInputFeed(streamPacket.getBodyElements());
+    private void processEvent(Packet packet) {
+        Event event = Event.fromInputFeed(packet.getBodyElements());
 
-        if (streamPacket.isCreate()) {
+        if (packet.isCreate()) {
             repository.save(event);
         }
         else {
@@ -67,11 +78,11 @@ public class EventService {
         }
     }
 
-    private void processMarket(StreamPacket streamPacket) {
-        Market market = Market.fromInputFeed(streamPacket.getBodyElements());
+    private void processMarket(Packet packet) {
+        Market market = Market.fromInputFeed(packet.getBodyElements());
         Optional<Event> opt = repository.findById(market.getEventId());
         opt.ifPresent(existingEvent -> {
-            if (streamPacket.isCreate()) {
+            if (packet.isCreate()) {
                 existingEvent.addMarket(market);
             }
             else {
@@ -82,9 +93,9 @@ public class EventService {
         });
     }
 
-    private void processOutcome(StreamPacket streamPacket) {
-        Outcome outcome = Outcome.fromInputFeed(streamPacket.getBodyElements());
-        if (streamPacket.isCreate()) {
+    private void processOutcome(Packet packet) {
+        Outcome outcome = Outcome.fromInputFeed(packet.getBodyElements());
+        if (packet.isCreate()) {
             Optional<Event> opt = repository.findByMarketsId(outcome.getMarketId());
             opt.ifPresent(existingEvent -> {
                 Market existingMarket = existingEvent.getMarketById(outcome.getMarketId());

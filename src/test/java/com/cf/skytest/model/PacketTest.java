@@ -10,7 +10,7 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 
-public class StreamPacketTest {
+public class PacketTest {
 
     @Test
     public void givenValidInput_whenFromInputFeed_thenCreatStreamPacket() {
@@ -23,12 +23,12 @@ public class StreamPacketTest {
         String body2 = "body2";
         String body3 = "body3";
         List<String> feed = Arrays.asList("", msgId, operation, type, timestamp, body1, body2, body3);
-        StreamPacket streamPacket = StreamPacket.fromInputFeed(feed);
-        Assert.assertEquals(streamPacket.getMsgId(), msgId);
-        Assert.assertEquals(streamPacket.getOperation(), operation);
-        Assert.assertEquals(streamPacket.getType(), type);
-        Assert.assertEquals(streamPacket.getTimestamp(), LocalDateTime.ofInstant(now, ZoneId.systemDefault()));
-        Assert.assertThat(streamPacket.getBodyElements(), CoreMatchers.hasItems(body1, body2, body3));
+        Packet packet = Packet.fromInputFeed(feed);
+        Assert.assertEquals(packet.getMsgId(), msgId);
+        Assert.assertEquals(packet.getOperation(), operation);
+        Assert.assertEquals(packet.getType(), type);
+        Assert.assertEquals(packet.getTimestamp(), LocalDateTime.ofInstant(now, ZoneId.systemDefault()));
+        Assert.assertThat(packet.getBodyElements(), CoreMatchers.hasItems(body1, body2, body3));
     }
 
 }

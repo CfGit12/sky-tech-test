@@ -15,6 +15,7 @@ public class SkytestApplication implements CommandLineRunner {
 	private EventService eventService;
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(SkytestApplication.class, args);
 	}
 

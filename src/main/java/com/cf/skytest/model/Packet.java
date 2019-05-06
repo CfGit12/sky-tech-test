@@ -13,11 +13,11 @@ import java.util.List;
 @Data
 @Builder
 @ToString
-public class StreamPacket {
+public class Packet {
 
-    public static StreamPacket fromInputFeed(List<String> inputFeed) {
+    public static Packet fromInputFeed(List<String> inputFeed) {
         long timestampMs = Long.parseLong(inputFeed.get(4));
-        return StreamPacket.builder()
+        return Packet.builder()
                 .msgId(inputFeed.get(1))
                 .operation(inputFeed.get(2))
                 .type(inputFeed.get(3))

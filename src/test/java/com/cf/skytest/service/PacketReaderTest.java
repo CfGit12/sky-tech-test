@@ -1,6 +1,6 @@
 package com.cf.skytest.service;
 
-import com.cf.skytest.model.StreamPacket;
+import com.cf.skytest.model.Packet;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +37,7 @@ public class PacketReaderTest {
     public void givenValidInput_whenReadEventPacket_thenReturnPacket() throws IOException {
         when(reader.readLine()).thenReturn(VALID_EVENT_PACKET);
 
-        StreamPacket packet = packetReader.readPacket();
+        Packet packet = packetReader.readPacket();
 
         assertEquals(packet.getMsgId(),"2054");
         assertEquals(packet.getOperation(), "create");
@@ -50,7 +50,7 @@ public class PacketReaderTest {
     public void givenValidInput_whenReadOutcomePacket_thenReturnPacket() throws IOException {
         when(reader.readLine()).thenReturn(VALID_OUTCOME_PACKET);
 
-        StreamPacket packet = packetReader.readPacket();
+        Packet packet = packetReader.readPacket();
 
         assertEquals(packet.getMsgId(),"2054");
         assertEquals(packet.getOperation(), "update");
