@@ -18,7 +18,7 @@ public class EventTest {
         String subCategory = "subCategory";
         String name = "name";
         Instant now = Instant.now();
-        String startTime = Long.toString(now.toEpochMilli()); // Sat May 4 2019 12:00:00 GMT+0100
+        String startTime = Long.toString(now.toEpochMilli());
         String displayed = "0";
         String suspended = "1";
         List<String> feed = Arrays.asList(id, category, subCategory, name, startTime, displayed, suspended);
