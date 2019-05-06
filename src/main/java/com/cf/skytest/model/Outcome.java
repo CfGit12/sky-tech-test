@@ -31,6 +31,15 @@ public class Outcome {
                 .build();
     }
 
+    public void update(Outcome outcome) {
+        this.marketId = outcome.getMarketId();
+        this.id = outcome.getId();
+        this.name = outcome.getName();
+        this.price = outcome.getPrice();
+        this.displayed = outcome.isDisplayed();
+        this.suspended = outcome.isSuspended();
+    }
+
     String marketId;
     String id;
     String name;

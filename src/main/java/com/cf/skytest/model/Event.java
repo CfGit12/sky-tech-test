@@ -11,7 +11,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Data
 @Builder
@@ -54,6 +53,15 @@ public class Event {
     }
 
     /**
+     * This should only be called after a succesful database search hence .get() on the optional.
+     * @param id
+     * @return
+     */
+    public Market getMarketById(String id) {
+        return markets.stream().filter(m -> m.getId().equals(id)).findFirst().get();
+    }
+
+    /**
      * Updates this event with the details of the passed in event, excluding the list of markets.
      * @param event
      */
@@ -65,15 +73,6 @@ public class Event {
         startTime = event.getStartTime();
         displayed = event.isDisplayed();
         suspended = event.isSuspended();
-    }
-
-    public void updateMarket(Market market) {
-        Optional<Market> opt = markets.stream().filter(m -> m.getId().equals(market.getId())).findFirst();
-        if (opt.isPresent()) {
-            Market existingMarket = opt.get();
-            existingMarket.update(market);
-        }
-
     }
 
     String id;

@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.lang3.BooleanUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,7 +34,22 @@ public class Market {
     }
 
     public void addOutcome(Outcome outcome) {
-        this.outcomes.add(outcome);
+        if (outcomes != null) {
+           outcomes.add(outcome);
+        }
+        else {
+            outcomes = new ArrayList<>();
+            outcomes.add(outcome);
+        }
+    }
+
+    /**
+     * This should only be called after a succesful database search hence .get() on the optional.
+     * @param id
+     * @return
+     */
+    public Outcome getOutcomeById(String id) {
+        return outcomes.stream().filter(o -> o.getId().equals(id)).findFirst().get();
     }
 
     public void update(Market market) {
